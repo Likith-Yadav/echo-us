@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { LogBox, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Font from 'expo-font';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
@@ -195,12 +196,25 @@ function MainTabs() {
 export default function App() {
   const { token, loadToken } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load token from storage
+    // Load fonts and token from storage
     const initApp = async () => {
-      await loadToken();
-      setIsLoading(false);
+      try {
+        // Load fonts
+        await Font.loadAsync({
+          ...Ionicons.font,
+        });
+        setFontsLoaded(true);
+        
+        // Load token
+        await loadToken();
+      } catch (error) {
+        console.error('Error loading app:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     initApp();
@@ -252,7 +266,7 @@ export default function App() {
     }
   }, [token]);
 
-  if (isLoading) {
+  if (isLoading || !fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#128c7e' }}>
         <ActivityIndicator size="large" color="#fff" />
