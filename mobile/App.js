@@ -207,14 +207,20 @@ export default function App() {
           ...Ionicons.font,
         });
         setFontsLoaded(true);
-        
+      } catch (error) {
+        console.error('Error loading fonts:', error);
+        // Continue anyway if fonts fail
+        setFontsLoaded(true);
+      }
+      
+      try {
         // Load token
         await loadToken();
       } catch (error) {
-        console.error('Error loading app:', error);
-      } finally {
-        setIsLoading(false);
+        console.error('Error loading token:', error);
       }
+      
+      setIsLoading(false);
     };
     
     initApp();
