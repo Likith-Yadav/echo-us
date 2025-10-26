@@ -406,19 +406,29 @@ export default function ChatDetailScreen({ route, navigation }) {
   };
 
   const handleVoiceCall = () => {
-    Alert.alert(
-      'Voice Call',
-      'Voice calling requires APK build to use WebRTC',
-      [{ text: 'OK' }]
-    );
+    if (!otherUser) {
+      Alert.alert('Error', 'Cannot start call. Please try again.');
+      return;
+    }
+    
+    navigation.navigate('Call', {
+      otherUser: otherUser,
+      callType: 'audio',
+      isIncoming: false,
+    });
   };
 
   const handleVideoCall = () => {
-    Alert.alert(
-      'Video Call',
-      'Video calling requires APK build to use WebRTC',
-      [{ text: 'OK' }]
-    );
+    if (!otherUser) {
+      Alert.alert('Error', 'Cannot start call. Please try again.');
+      return;
+    }
+    
+    navigation.navigate('Call', {
+      otherUser: otherUser,
+      callType: 'video',
+      isIncoming: false,
+    });
   };
 
   const handleLongPress = (item) => {
@@ -450,25 +460,7 @@ export default function ChatDetailScreen({ route, navigation }) {
         return;
       }
 
-      // Check if running in Expo Go
-      const isExpoGo = !Platform.constants?.manifest?.id;
-      
-      if (isExpoGo || Platform.OS === 'android') {
-        Alert.alert(
-          '📱 Feature Limited in Expo Go',
-          'Saving images from chat requires a development build due to Android permission restrictions.\n\n' +
-          'For now, you can:\n' +
-          '• Take a screenshot\n' +
-          '• Build the full APK to enable this feature\n\n' +
-          'See ANDROID_BUILD_GUIDE.md for build instructions.',
-          [{ text: 'OK' }]
-        );
-        return;
-      }
-
-      Alert.alert('💾 Saving...', 'Downloading image to gallery');
-
-      // This will work on iOS in Expo Go
+      // Save the image to gallery
       await MediaLibrary.saveToLibraryAsync(viewImage);
       
       Alert.alert('✅ Saved!', 'Image saved to gallery');
@@ -476,8 +468,7 @@ export default function ChatDetailScreen({ route, navigation }) {
       console.error('Save image error:', error);
       Alert.alert(
         '❌ Error', 
-        'Failed to save image. This feature requires a development build on Android.\n\n' +
-        'See ANDROID_BUILD_GUIDE.md for instructions.',
+        'Failed to save image: ' + (error.message || 'Unknown error'),
         [{ text: 'OK' }]
       );
     }
