@@ -17,7 +17,6 @@ model User {
   password        String
   profilePic      String?   @default("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg")
   status          String?   @default("Hey there! I'm using EchoUs")
-  pushToken       String?   // Expo push notification token
   isOnline        Boolean   @default(false)
   lastSeen        DateTime  @default(now())
   createdAt       DateTime  @default(now())
