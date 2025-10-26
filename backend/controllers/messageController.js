@@ -32,6 +32,21 @@ const getMessages = async (req, res) => {
             name: true,
             profilePic: true
           }
+        },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            messageType: true,
+            mediaUrl: true,
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                username: true
+              }
+            }
+          }
         }
       },
       orderBy: { createdAt: 'desc' },
@@ -49,7 +64,7 @@ const getMessages = async (req, res) => {
 // Send text message
 const sendMessage = async (req, res) => {
   try {
-    const { receiverId, content, messageType } = req.body;
+    const { receiverId, content, messageType, replyToId } = req.body;
     const senderId = req.user.id;
 
     if (!receiverId || !content) {
@@ -61,7 +76,8 @@ const sendMessage = async (req, res) => {
         senderId,
         receiverId,
         content,
-        messageType: messageType || 'text'
+        messageType: messageType || 'text',
+        replyToId: replyToId || null
       },
       include: {
         sender: {
@@ -78,6 +94,21 @@ const sendMessage = async (req, res) => {
             username: true,
             name: true,
             profilePic: true
+          }
+        },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            messageType: true,
+            mediaUrl: true,
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                username: true
+              }
+            }
           }
         }
       }
@@ -145,6 +176,21 @@ const uploadMedia = async (req, res) => {
             username: true,
             name: true,
             profilePic: true
+          }
+        },
+        replyTo: {
+          select: {
+            id: true,
+            content: true,
+            messageType: true,
+            mediaUrl: true,
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                username: true
+              }
+            }
           }
         }
       }

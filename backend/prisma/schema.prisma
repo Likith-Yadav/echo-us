@@ -38,6 +38,7 @@ model Message {
   messageType String    @default("text") // text, image, voice, video
   mediaUrl    String?   // Cloudinary URL for media files
   isRead      Boolean   @default(false)
+  replyToId   String?   // ID of message being replied to
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -48,8 +49,13 @@ model Message {
   receiverId  String
   receiver    User      @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 
+  // Reply relation
+  replyTo     Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies     Message[] @relation("MessageReplies")
+
   @@index([senderId, receiverId])
   @@index([createdAt])
+  @@index([replyToId])
 }
 
 model Call {
