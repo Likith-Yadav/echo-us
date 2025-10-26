@@ -1,0 +1,73 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  username        String    @unique
+  name            String
+  email           String    @unique
+  password        String
+  profilePic      String?   @default("https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg")
+  status          String?   @default("Hey there! I'm using EchoUs")
+  isOnline        Boolean   @default(false)
+  lastSeen        DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  sentMessages    Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  initiatedCalls  Call[]    @relation("CallInitiator")
+  receivedCalls   Call[]    @relation("CallReceiver")
+
+  @@index([email])
+  @@index([username])
+}
+
+model Message {
+  id          String    @id @default(uuid())
+  content     String?
+  messageType String    @default("text") // text, image, voice, video
+  mediaUrl    String?   // Cloudinary URL for media files
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  senderId    String
+  sender      User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  receiverId  String
+  receiver    User      @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId])
+  @@index([createdAt])
+}
+
+model Call {
+  id          String    @id @default(uuid())
+  callType    String    // audio, video
+  status      String    @default("initiated") // initiated, ringing, ongoing, ended, missed, rejected
+  duration    Int?      @default(0) // in seconds
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+
+  // Relations
+  callerId    String
+  caller      User      @relation("CallInitiator", fields: [callerId], references: [id], onDelete: Cascade)
+  
+  receiverId  String
+  receiver    User      @relation("CallReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([callerId, receiverId])
+  @@index([startedAt])
+}
+
