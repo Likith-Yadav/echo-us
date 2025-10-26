@@ -4,6 +4,7 @@
     "slug": "echous",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "resizeMode": "contain",
@@ -23,6 +24,10 @@
     },
     "android": {
       "package": "com.echous.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6366f1"
+      },
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
