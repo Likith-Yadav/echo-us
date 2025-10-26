@@ -44,11 +44,15 @@ const useAuthStore = create((set, get) => ({
         const { initNotifications } = require('../utils/notifications');
         const pushToken = await initNotifications();
         if (pushToken) {
-          await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
-          console.log('📱 Push token saved to backend');
+          try {
+            await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
+            console.log('📱 Push token saved to backend');
+          } catch (pushTokenError) {
+            console.log('⚠️ Could not save push token to backend (will work after backend update):', pushTokenError.response?.data?.error || pushTokenError.message);
+          }
         }
       } catch (error) {
-        console.log('⚠️ Could not save push token:', error.message);
+        console.log('⚠️ Could not initialize notifications:', error.message);
       }
       
       set({ token, user, loading: false });
@@ -84,11 +88,15 @@ const useAuthStore = create((set, get) => ({
         const pushToken = await initNotifications();
         if (pushToken) {
           // Save push token to backend
-          await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
-          console.log('📱 Push token saved to backend');
+          try {
+            await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
+            console.log('📱 Push token saved to backend');
+          } catch (pushTokenError) {
+            console.log('⚠️ Could not save push token to backend (will work after backend update):', pushTokenError.response?.data?.error || pushTokenError.message);
+          }
         }
       } catch (error) {
-        console.log('⚠️ Could not save push token:', error.message);
+        console.log('⚠️ Could not initialize notifications:', error.message);
       }
       
       // Initialize socket with NEW token
