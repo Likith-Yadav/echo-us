@@ -9,19 +9,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import useAuthStore from '../store/authStore';
-
-// Dynamically import WebRTC to prevent errors in Expo Go
-let RTCPeerConnection, RTCView, mediaDevices;
-try {
-  const webrtc = require('react-native-webrtc');
-  RTCPeerConnection = webrtc.RTCPeerConnection;
-  RTCView = webrtc.RTCView;
-  mediaDevices = webrtc.mediaDevices;
-} catch (error) {
-  console.log('WebRTC not available - this is expected in Expo Go');
-}
-
+import { RTCPeerConnection, RTCView, mediaDevices } from 'react-native-webrtc';
 import {
   getSocket,
   initiateCall,
@@ -32,6 +20,7 @@ import {
   onCallEnded,
   onIceCandidate,
 } from '../utils/socket';
+import useAuthStore from '../store/authStore';
 
 const { width, height } = Dimensions.get('window');
 
@@ -59,21 +48,7 @@ export default function CallScreen({ route, navigation }) {
   const callStartTime = useRef(null);
   const durationInterval = useRef(null);
 
-  // Check if WebRTC is available
   useEffect(() => {
-    if (!mediaDevices || !RTCPeerConnection) {
-      Alert.alert(
-        '❌ WebRTC Not Available',
-        'Voice and video calls require the production APK build.\n\nThis feature is not available in Expo Go.',
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack()
-          }
-        ]
-      );
-      return;
-    }
     setupCall();
     
     // Socket listeners
