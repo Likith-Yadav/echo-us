@@ -4,7 +4,8 @@ const {
   getOtherUser,
   updateProfile,
   uploadProfilePic,
-  changePassword
+  changePassword,
+  updatePushToken
 } = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -37,6 +38,11 @@ router.post('/profile-pic', authMiddleware, upload.single('profilePic'), uploadP
 // @desc    Change password
 // @access  Private
 router.put('/password', authMiddleware, changePassword);
+
+// @route   PUT /api/users/push-token
+// @desc    Update push notification token
+// @access  Private
+router.put('/push-token', authMiddleware, updatePushToken);
 
 module.exports = router;
 

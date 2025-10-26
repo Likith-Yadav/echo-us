@@ -166,10 +166,35 @@ const changePassword = async (req, res) => {
   }
 };
 
+// Update push notification token
+const updatePushToken = async (req, res) => {
+  try {
+    const { pushToken } = req.body;
+    const userId = req.user.id;
+
+    if (!pushToken) {
+      return res.status(400).json({ error: 'Push token is required' });
+    }
+
+    // Update user's push token
+    await prisma.user.update({
+      where: { id: userId },
+      data: { pushToken }
+    });
+
+    console.log(`📱 Push token saved for user ${userId}`);
+    res.json({ message: 'Push token saved successfully' });
+  } catch (error) {
+    console.error('Update push token error:', error);
+    res.status(500).json({ error: 'Failed to update push token' });
+  }
+};
+
 module.exports = { 
   getOtherUser, 
   updateProfile, 
   uploadProfilePic, 
-  changePassword 
+  changePassword,
+  updatePushToken 
 };
 

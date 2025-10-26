@@ -39,6 +39,18 @@ const useAuthStore = create((set, get) => ({
       await AsyncStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
+      // Get and save push notification token
+      try {
+        const { initNotifications } = require('../utils/notifications');
+        const pushToken = await initNotifications();
+        if (pushToken) {
+          await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
+          console.log('📱 Push token saved to backend');
+        }
+      } catch (error) {
+        console.log('⚠️ Could not save push token:', error.message);
+      }
+      
       set({ token, user, loading: false });
       return { success: true };
     } catch (error) {
@@ -65,6 +77,19 @@ const useAuthStore = create((set, get) => ({
       // Save token
       await AsyncStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Get and save push notification token
+      try {
+        const { initNotifications } = require('../utils/notifications');
+        const pushToken = await initNotifications();
+        if (pushToken) {
+          // Save push token to backend
+          await axios.put(`${API_URL}/api/users/push-token`, { pushToken });
+          console.log('📱 Push token saved to backend');
+        }
+      } catch (error) {
+        console.log('⚠️ Could not save push token:', error.message);
+      }
       
       // Initialize socket with NEW token
       initSocket(token);
