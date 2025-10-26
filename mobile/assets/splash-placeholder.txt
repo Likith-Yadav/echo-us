@@ -1,0 +1,3 @@
+Splash screen placeholder - Expo will use default splash
+You can add a custom splash image later
+

@@ -1,0 +1,3 @@
+Icon placeholder - Expo will use default icon
+You can add a custom 1024x1024 PNG icon later
+
