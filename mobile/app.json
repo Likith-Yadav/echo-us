@@ -59,6 +59,9 @@
           "savePhotosPermission": "Allow EchoUs to save photos.",
           "isAccessMediaLocationEnabled": true
         }
+      ],
+      [
+        "expo-font"
       ]
     ],
     "extra": {

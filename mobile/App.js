@@ -5,8 +5,9 @@ import { navigationRef } from './src/utils/navigationRef';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { LogBox, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
+import { LogBox, TouchableOpacity, View, ActivityIndicator, Alert, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 
 // Screens
 import LoginScreen from './src/screens/LoginScreen';
@@ -195,6 +196,11 @@ function MainTabs() {
 export default function App() {
   const { token, loadToken } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Load fonts
+  const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
+  });
 
   useEffect(() => {
     // Load token from storage
@@ -252,10 +258,11 @@ export default function App() {
     }
   }, [token]);
 
-  if (isLoading) {
+  if (!fontsLoaded || isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#128c7e' }}>
         <ActivityIndicator size="large" color="#fff" />
+        <Text style={{ color: '#fff', marginTop: 20 }}>Loading EchoUs...</Text>
       </View>
     );
   }
