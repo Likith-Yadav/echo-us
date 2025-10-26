@@ -406,11 +406,29 @@ export default function ChatDetailScreen({ route, navigation }) {
   };
 
   const handleVoiceCall = () => {
-    Alert.alert('Coming Soon', 'Voice calls will be available in the next update!');
+    if (!otherUser) {
+      Alert.alert('Error', 'Cannot start call. Please try again.');
+      return;
+    }
+    
+    navigation.navigate('Call', {
+      otherUser: otherUser,
+      callType: 'audio',
+      isIncoming: false,
+    });
   };
 
   const handleVideoCall = () => {
-    Alert.alert('Coming Soon', 'Video calls will be available in the next update!');
+    if (!otherUser) {
+      Alert.alert('Error', 'Cannot start call. Please try again.');
+      return;
+    }
+    
+    navigation.navigate('Call', {
+      otherUser: otherUser,
+      callType: 'video',
+      isIncoming: false,
+    });
   };
 
   const handleLongPress = (item) => {

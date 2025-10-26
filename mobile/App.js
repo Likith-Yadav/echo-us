@@ -1,10 +1,11 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { navigationRef } from './src/utils/navigationRef';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { LogBox, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { LogBox, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Screens
@@ -211,7 +212,43 @@ export default function App() {
   useEffect(() => {
     if (token) {
       // Initialize socket when logged in
-      initSocket(token);
+      const socket = initSocket(token);
+      
+      // Listen for incoming calls globally
+      const { onIncomingCall } = require('./src/utils/socket');
+      const { navigate } = require('./src/utils/navigationRef');
+      
+      onIncomingCall((callData) => {
+        console.log('📞 Incoming call received:', callData);
+        
+        // Show incoming call alert
+        Alert.alert(
+          `${callData.callType === 'video' ? '📹' : '📞'} Incoming Call`,
+          `${callData.call.caller?.name || 'Someone'} is calling...`,
+          [
+            {
+              text: 'Decline',
+              style: 'cancel',
+              onPress: () => {
+                const { endCall } = require('./src/utils/socket');
+                endCall(callData.call.id);
+              }
+            },
+            {
+              text: 'Answer',
+              onPress: () => {
+                // Navigate to call screen
+                navigate('Call', {
+                  otherUser: callData.call.caller,
+                  callType: callData.callType,
+                  isIncoming: true,
+                  callData: callData
+                });
+              }
+            }
+          ]
+        );
+      });
     }
   }, [token]);
 
@@ -226,7 +263,7 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
